@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 
-pip install tifffile
+pip install tifffile #TODO: check if really required
 
 wget -P ./data/ https://www.dropbox.com/s/0rvuae4mj6jn922/isbi.tar.gz
 tar -xf ./data/isbi.tar.gz -C ./data/
-
-(set -e; for f in examples/_tests_scripts/*.py; do PYTHONPATH=./catalyst:${PYTHONPATH} python "$f"; done)
+set -e
+(set -e; for f in examples/_tests_scripts/{dl,z}*.py; do PYTHONPATH=./catalyst:${PYTHONPATH} python "$f"; done)
 
 PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
   python catalyst/dl/scripts/run.py \
@@ -18,7 +18,7 @@ LOGFILE=./examples/logs/_tests_mnist_stages1/checkpoints/_metrics.json
 
 if [[ ! (-f "$LOGFILE" && -r "$LOGFILE") ]]; then
     echo "File $LOGFILE does not exist"
-    exit -1
+    exit 1
 fi
 python -c "from safitty import Safict; metrics=Safict.load('$LOGFILE'); assert metrics.get('stage1.2', 'loss') < metrics.get('stage1.0', 'loss'); assert metrics.get('stage1.2', 'loss') < 2.0"
 
@@ -36,7 +36,7 @@ PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
 
 if [[ ! (-f "$LOGFILE" && -r "$LOGFILE") ]]; then
     echo "File $LOGFILE does not exist"
-    exit -1
+    exit 1
 fi
 python -c "from safitty import Safict; metrics=Safict.load('$LOGFILE'); assert metrics.get('stage1.2', 'loss') < metrics.get('stage1.0', 'loss'); assert metrics.get('stage1.2', 'loss') < 2.0"
 
